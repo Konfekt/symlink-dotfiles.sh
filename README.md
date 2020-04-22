@@ -1,4 +1,4 @@
-Have a look at <https://konfekt.github.io/blog/2018/11/10/simple-dotfiles-setup> to know how dotfiles are most easily put under (`git`) version control.
+Get to know [how](https://konfekt.github.io/blog/2018/11/10/simple-dotfiles-setup) dotfiles are most easily put under (`git`) version control.
 
 # About
 
@@ -16,14 +16,13 @@ Then to put your dotfiles in `~/` under version control:
 
 # Installation
 
-1. Clone this repository, for example into `~/Downloads`
-    ```sh
-    cd ~/Downloads/
-    git clone https://github.com/konfekt/symlink-dotfiles.sh
-    ````
 0. Copy `symlink-dotfiles.sh` into a convenient folder, for example, `~/bin`
+
     ```sh
-    cp ~/Downloads/symlink-dotfiles.sh/symlink-dotfiles.sh ~/bin/
-    ```
+    mkdir -p ~/bin && cd ~/bin
+    curl -fsSLO https://raw.githubusercontent.com/Konfekt/symlink-dotfiles.sh/master/symlink-dotfiles.sh
+    chmod a+x ./symlink-dotfiles.sh
+    ````
+
 0. Run `~/bin/symlink-dotfiles.sh`.
 
