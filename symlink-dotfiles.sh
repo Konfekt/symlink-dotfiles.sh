@@ -6,11 +6,12 @@ dotdir=${XDG_CONFIG_HOME:-${HOME}/.config}
 # Create backup folder named different from any existing one:
 # If the directory already exists, then append '.old'.
 make_backup_dir() {
-    if [ -d "$1" ]; then
-        make_backup_dir "$1.old"
-    else
-        mkdir --parents --verbose "$1"
-    fi
+  if [ -d "$1" ]; then
+    make_backup_dir "$1.old"
+  else
+    mkdir --parents "$1" &&
+      echo "$1"
+  fi
 }
 backupdir=$(make_backup_dir "${dotdir}")
 dotdir=$(realpath --relative-to="${HOME}" "${dotdir}")
@@ -25,11 +26,10 @@ ignores=(
 is_ignore() {
   for ignore in ${ignores[*]}; do
     if [ "$ignore" = "$1" ]; then
-      echo "Ignored $name."
-      return 1
+      echo 1
+      return
     fi
   done
-  return 0
 }
 
 (
@@ -41,7 +41,10 @@ for file in "${dotdir}"/.[a-zA-Z0-9]*; do
     name=$(basename "${file}")
 
     # Skip file if in ignore list
-    [ $(is_ignore "$name") = 1 ] && continue
+    if [ "$(is_ignore "$name")" = "1" ]; then
+      echo "Ignored $name."
+      continue
+    fi
 
     # If dot file already exists in "$HOME", then move it to backup folder.
     if [ -e "${HOME}/${name}" ]; then
@@ -72,7 +75,7 @@ chmod-safe() {
 
 (
 cd "$HOME/$dotdir" &&
-exec chmod-safe \
+chmod-safe \
   ./.gnupg \
   ./.ssh \
   ./.ssl \
