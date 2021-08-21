@@ -70,7 +70,7 @@ rmdir --ignore-fail-on-non-empty "${backupdir}"
 # Set safe permissions on sensible configuration files.
 chmod-safe() {
   find "$@" -type d -print0 | xargs -0 chmod --silent 700
-  find "$@" -type f -print0 | xargs -0 chmod --silent "${1:=600}"
+  find "$@" -type f -print0 | xargs -0 chmod --silent 600
 }
 
 (
