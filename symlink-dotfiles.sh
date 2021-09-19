@@ -14,8 +14,9 @@ make_backup_dir() {
   fi
 }
 backupdir=$(make_backup_dir "${dotdir}")
-dotdir=$(realpath --relative-to="${HOME}" "${dotdir}")
-backupdir=$(realpath --relative-to="${HOME}" "${backupdir}")
+
+dotdir=$(realpath "${dotdir}")
+backupdir=$(realpath "${backupdir}")
 
 # Ignore certain git files and folders
 ignores=(
@@ -33,11 +34,11 @@ is_ignore() {
 }
 
 (
-cd "$HOME" || exit 1
-for file in "${dotdir}"/.[a-zA-Z0-9]*; do
+cd "$dotdir" || exit 1
+for file in .[!.]*; do
     echo "Found $file ..."
 
-    # keep file name only
+    file=$(realpath "${file}")
     name=$(basename "${file}")
 
     # Skip file if in ignore list
@@ -50,17 +51,11 @@ for file in "${dotdir}"/.[a-zA-Z0-9]*; do
     if [ -e "${HOME}/${name}" ]; then
         mv --verbose "$HOME"/"${name}" "${backupdir}/$name"
         echo "Backed up $HOME/$name to ${backupdir}/$name."
-
-        # TODO: sometimes the existing dot file is actually a symlink that
-        # points to another dot file. This script may have broken such
-        # symlinks by moving the target dot file. If that's the case then
-        # this IF will return false, and you'll have to manually
-        # create your symlink again when you want to restore your settings.
     fi
 
     # create symlink
     ln --verbose --symbolic --relative "$file" "$HOME/$name"
-    echo "Created symlink: $HOME/$name -> $file." 
+    echo "Created symlink: $HOME/$name -> $file."
 done
 
 # Remove backup dir if unused.
@@ -74,7 +69,7 @@ chmod-safe() {
 }
 
 (
-cd "$HOME/$dotdir" &&
+cd "$dotdir" &&
 chmod-safe \
   ./.gnupg \
   ./.ssh \
